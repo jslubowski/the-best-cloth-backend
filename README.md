@@ -1,2 +1,6 @@
 # the-best-cloth-backend
-.NET Core backend for e-commerce site.
+This is a .NET Core Web REST API backend application for fake clothing manufacturer 'The Best Cloth'.
+## about
+Application is being created as a self-learninng project. 
+It uses following technologies (8.2.2021):
+* PostgreSQL
