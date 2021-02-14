@@ -1,4 +1,4 @@
-﻿namespace TheBestCloth.API.Helpers
+﻿namespace TheBestCloth.DAL.Helpers
 {
     public class PaginationParams
     {

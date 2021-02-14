@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-using TheBestCloth.API.Helpers;
 using TheBestCloth.DAL.Data;
+using TheBestCloth.DAL.Helpers;
 using TheBestCloth.DAL.Interfaces;
 using TheBestCloth.DAL.Model;
 
@@ -15,10 +15,11 @@ namespace TheBestCloth.DAL.Repositories
             _context = context;
         }
 
-        public async Task<bool> AddShoppingItemAsync(ShoppingItem shoppingItem)
+        public async Task<ShoppingItem> AddShoppingItemAsync(ShoppingItem shoppingItem)
         {
-            await _context.ShoppingItems.AddAsync(shoppingItem);
-            return await SaveChangesAsync();
+            var item = await _context.ShoppingItems.AddAsync(shoppingItem);
+            await SaveChangesAsync();
+            return item.Entity;
         }
 
         public Task<ShoppingItem> GetShoppingItemByIdAsync(int id)
@@ -26,7 +27,7 @@ namespace TheBestCloth.DAL.Repositories
             return _context.ShoppingItems.FirstOrDefaultAsync(item => item.Id == id);
         }
 
-        public Task<PagedList<ShoppingItem>> GetShoppingItemsListAsync(PaginationParams paginationParams)
+        public Task<PagedList<ShoppingItem>> GetAllShoppingItemsListAsync(PaginationParams paginationParams)
         {
             var shoppingItemsQueryable = _context.ShoppingItems.AsQueryable();
             return PagedList<ShoppingItem>.CreateAsync(
