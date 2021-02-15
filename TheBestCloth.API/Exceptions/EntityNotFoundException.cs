@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TheBestCloth.BLL.Exceptions
+namespace TheBestCloth.API.Exceptions
 {
     public class EntityNotFoundException : Exception
     {

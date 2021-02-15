@@ -1,4 +1,4 @@
-﻿namespace TheBestCloth.DAL.Helpers
+﻿namespace TheBestCloth.BLL.Helpers
 {
     public class PaginationParams
     {

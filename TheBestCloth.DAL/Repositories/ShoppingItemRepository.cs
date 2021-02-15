@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using TheBestCloth.BLL.Helpers;
+using TheBestCloth.BLL.Interfaces;
+using TheBestCloth.BLL.ModelDatabase;
 using TheBestCloth.DAL.Data;
-using TheBestCloth.DAL.Helpers;
-using TheBestCloth.DAL.Interfaces;
-using TheBestCloth.DAL.Model;
 
 namespace TheBestCloth.DAL.Repositories
 {
@@ -27,10 +27,10 @@ namespace TheBestCloth.DAL.Repositories
             return _context.ShoppingItems.FirstOrDefaultAsync(item => item.Id == id);
         }
 
-        public Task<PagedList<ShoppingItem>> GetAllShoppingItemsListAsync(PaginationParams paginationParams)
+        public Task<IEnumerable<ShoppingItem>> GetAllShoppingItemsListAsync(PaginationParams paginationParams)
         {
             var shoppingItemsQueryable = _context.ShoppingItems.AsQueryable();
-            return PagedList<ShoppingItem>.CreateAsync(
+            return IEnumerable<ShoppingItem>.CreateAsync(
                 shoppingItemsQueryable,
                 paginationParams.PageNumber,
                 paginationParams.PageSize);
@@ -50,6 +50,19 @@ namespace TheBestCloth.DAL.Repositories
             var executedCorrectly = await _context.SaveChangesAsync();
             if (executedCorrectly > 0) return true;
             else return false;
+        }
+
+        public async Task<ShoppingItem> UpdateShoppingItemAsync(ShoppingItem shoppingItem)
+        {
+            var shoppingItemFound = await _context.ShoppingItems.FirstOrDefaultAsync(item => item.Id == shoppingItem.Id);
+            if (shoppingItemFound == null) return Task.FromResult<ShoppingItem>(null).Result;
+            _context.Entry(shoppingItemFound).State = EntityState.Detached;
+
+            _context.ShoppingItems.Attach(shoppingItem);
+            _context.Entry(shoppingItem).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+            return shoppingItem;
         }
     }
 }

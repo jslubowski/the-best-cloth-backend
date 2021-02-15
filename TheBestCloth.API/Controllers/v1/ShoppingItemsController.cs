@@ -1,14 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TheBestCloth.API.Extensions;
-using TheBestCloth.API.Models;
-using TheBestCloth.BLL.Interfaces;
-using TheBestCloth.DAL.Helpers;
-using TheBestCloth.DAL.Model;
+using TheBestCloth.API.Interfaces;
+using TheBestCloth.BLL.Helpers;
+using TheBestCloth.BLL.ModelDatabase;
 
 namespace TheBestCloth.API.Controllers
 {
@@ -20,12 +17,13 @@ namespace TheBestCloth.API.Controllers
         {
             _shoppingItemsService = shoppingItemsService;
         }
+
         [HttpPost("add", Name = "add-shopping-item")]
         public async Task<ActionResult<ShoppingItem>> AddShoppingItemAsync([FromBody] ShoppingItem shoppingItem)
         {
-            var successful = await _shoppingItemsService.AddShoppingItemAsync(shoppingItem);
-            if (successful != null) return Ok(successful);
-            return BadRequest();
+            var createdItem = await _shoppingItemsService.AddShoppingItemAsync(shoppingItem);
+            if (createdItem != null) return CreatedAtRoute("get-shopping-item", new { id = createdItem.Id }, createdItem);
+            return BadRequest("Failed to add object!");
 
         }
 
@@ -33,22 +31,28 @@ namespace TheBestCloth.API.Controllers
         public async Task<ActionResult<ShoppingItem>> GetShoppingItemByIdAsync(int id)
         {
             var item = await _shoppingItemsService.GetShoppingItemById(id);
-            return Ok(HATEOASShoppingItem(item));
+            if (item != null) return Ok(item);
+            return BadRequest(new { message = $"Failed to fetch item with id: {id}!" });
 
         }
 
         [HttpGet("all", Name = "get-all-shopping-items")]
-        public async Task<ActionResult<IEnumerable<ShoppingItemModel>>> GetAllShopingItemsAsync([FromQuery] PaginationParams paginationParams)
+        public async Task<ActionResult<IEnumerable<ShoppingItem>>> GetAllShopingItemsAsync([FromQuery] PaginationParams paginationParams)
         {
-            var shoppingItems =  await _shoppingItemsService.GetAllShoppingItemsAsync(paginationParams);
- 
+            var shoppingItems = await _shoppingItemsService.GetAllShoppingItemsAsync(paginationParams);
+            if (shoppingItems == null) return BadRequest();
+
             Response.AddPaginationHeader(shoppingItems.CurrentPage, paginationParams.PageSize, shoppingItems.TotalCount, shoppingItems.TotalPages);
 
-            //TODO Add HATEOAS for list (next, prev)
+            return shoppingItems;
+        }
 
-            return shoppingItems
-                .Select(item => HATEOASShoppingItem(item))
-                .ToList();
+        [HttpPut(Name = "update-shopping-item")]
+        public async Task<ActionResult<ShoppingItem>> UpdateShoppingItemAsync([FromBody] ShoppingItem shoppingItem)
+        {
+            var shoppingItemUpdated = await _shoppingItemsService.UpdateShoppingItemAsync(shoppingItem);
+            if (shoppingItemUpdated == null) return BadRequest(new { message = $"Cannot find shopping item with given id: {shoppingItem.Id}" });
+            return Ok(shoppingItemUpdated);
         }
 
     }

@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheBestCloth.DAL", "TheBest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheBestCloth.BLL", "TheBestCloth.BLL\TheBestCloth.BLL.csproj", "{41D5817F-FC87-4226-A547-5AAEDA2558AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBestCloth.UnitTest", "TheBestCloth.UnitTest\TheBestCloth.UnitTest.csproj", "{36BE1649-58EF-4DD8-8ABC-8B8ADEF81F61}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{41D5817F-FC87-4226-A547-5AAEDA2558AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41D5817F-FC87-4226-A547-5AAEDA2558AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41D5817F-FC87-4226-A547-5AAEDA2558AA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{36BE1649-58EF-4DD8-8ABC-8B8ADEF81F61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{36BE1649-58EF-4DD8-8ABC-8B8ADEF81F61}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{36BE1649-58EF-4DD8-8ABC-8B8ADEF81F61}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{36BE1649-58EF-4DD8-8ABC-8B8ADEF81F61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

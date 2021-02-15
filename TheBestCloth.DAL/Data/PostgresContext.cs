@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TheBestCloth.DAL.Model;
+using System;
+using TheBestCloth.BLL.ModelDatabase;
 
 namespace TheBestCloth.DAL.Data
 {
@@ -11,10 +12,15 @@ namespace TheBestCloth.DAL.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ShoppingItem>();
+            modelBuilder.ApplyConfiguration(new ShoppingItemConfiguration());
         }
 
         public DbSet<ShoppingItem> ShoppingItems { get; set; }
+        public DbSet<Photo> Photos { get; set; }
 
+        internal object FirstOrDefault()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

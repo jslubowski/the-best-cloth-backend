@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TheBestCloth.API.Interfaces;
+using TheBestCloth.API.Service;
 using TheBestCloth.BLL.Interfaces;
-using TheBestCloth.BLL.Service;
-using TheBestCloth.DAL.Interfaces;
 using TheBestCloth.DAL.Repositories;
 
 namespace TheBestCloth.API.Extensions

@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using TheBestCloth.API.Models;
-using TheBestCloth.DAL.Model;
 
 namespace TheBestCloth.API.Helpers
 {
@@ -8,7 +6,7 @@ namespace TheBestCloth.API.Helpers
     {
         public AutoMapping()
         {
-            CreateMap<ShoppingItem, ShoppingItemModel>();
+            //CreateMap<ShoppingItem, ShoppingItemModel>();
         }
     }
 }
