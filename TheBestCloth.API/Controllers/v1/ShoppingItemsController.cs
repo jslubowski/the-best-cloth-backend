@@ -1,9 +1,9 @@
-﻿using AutoMapper;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Threading.Tasks;
 using TheBestCloth.API.Extensions;
 using TheBestCloth.API.Interfaces;
+using TheBestCloth.BLL.Exceptions;
 using TheBestCloth.BLL.Helpers;
 using TheBestCloth.BLL.ModelDatabase;
 
@@ -12,8 +12,7 @@ namespace TheBestCloth.API.Controllers
     public class ShoppingItemsController : BaseApiController
     {
         private readonly IShoppingItemsService _shoppingItemsService;
-        public ShoppingItemsController(IShoppingItemsService shoppingItemsService, IActionDescriptorCollectionProvider actionDescriptorCollectionProvider, IMapper mapper)
-            : base(actionDescriptorCollectionProvider, mapper)
+        public ShoppingItemsController(IShoppingItemsService shoppingItemsService)
         {
             _shoppingItemsService = shoppingItemsService;
         }
@@ -53,6 +52,39 @@ namespace TheBestCloth.API.Controllers
             var shoppingItemUpdated = await _shoppingItemsService.UpdateShoppingItemAsync(shoppingItem);
             if (shoppingItemUpdated == null) return BadRequest(new { message = $"Cannot find shopping item with given id: {shoppingItem.Id}" });
             return Ok(shoppingItemUpdated);
+        }
+
+        [HttpDelete("{shoppingItemId}", Name = "remove-shopping-item")]
+        public async Task<ActionResult> RemoveShoppingItemAsync(int shoppingItemId)
+        {
+            var isRemovalSuccessful = await _shoppingItemsService.RemoveShoppingItemAsync(shoppingItemId);
+            if (isRemovalSuccessful) return Ok();
+            return BadRequest($"Cannot remove shopping item with ID: {shoppingItemId}");
+        }
+
+        [HttpPost("{id}/photos", Name = "add-photo")]
+        public async Task<ActionResult<Photo>> AddPhotoForShoppingItemAsync([FromForm] IFormFile photo, int id)
+        {
+            var photoAdded = await _shoppingItemsService.AddPhotoForItemAsync(photo, id);
+            if (photoAdded == null) return BadRequest($"Can't find photo with ID: {id}");
+            else return Ok(photoAdded);
+        }
+
+        [HttpDelete("{shoppingItemId}/photos/{photoId}")]
+        public async Task<ActionResult> RemovePhotoForShoppingItem(int shoppingItemId, int photoId)
+        {
+            var isRemovalSuccessful = false;
+            try
+            {
+                isRemovalSuccessful = await _shoppingItemsService.RemovePhotoFromShoppingItemAsync(photoId, shoppingItemId);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return BadRequest("Cannot find entity." + ex.ToString());
+            }
+
+            if (isRemovalSuccessful) return Ok();
+            return BadRequest($"Cannot remove photo with ID: {photoId} from photo with ID: {shoppingItemId}");
         }
 
     }

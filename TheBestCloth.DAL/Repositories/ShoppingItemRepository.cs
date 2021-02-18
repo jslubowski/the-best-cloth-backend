@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
+using TheBestCloth.BLL.Exceptions;
 using TheBestCloth.BLL.Helpers;
 using TheBestCloth.BLL.Interfaces;
 using TheBestCloth.BLL.ModelDatabase;
@@ -24,12 +26,16 @@ namespace TheBestCloth.DAL.Repositories
 
         public Task<ShoppingItem> GetShoppingItemByIdAsync(int id)
         {
-            return _context.ShoppingItems.FirstOrDefaultAsync(item => item.Id == id);
+            return _context.ShoppingItems
+                .Include(item => item.Photos)
+                .FirstOrDefaultAsync(item => item.Id == id);
         }
 
         public Task<IEnumerable<ShoppingItem>> GetAllShoppingItemsListAsync(PaginationParams paginationParams)
         {
-            var shoppingItemsQueryable = _context.ShoppingItems.AsQueryable();
+            var shoppingItemsQueryable = _context.ShoppingItems
+                .AsQueryable()
+                .Include(item => item.Photos);
             return IEnumerable<ShoppingItem>.CreateAsync(
                 shoppingItemsQueryable,
                 paginationParams.PageNumber,
@@ -41,8 +47,8 @@ namespace TheBestCloth.DAL.Repositories
             var shoppingItemToDelete = await _context.ShoppingItems.FirstOrDefaultAsync(item => item.Id == id);
             if (shoppingItemToDelete == null) return true;
             _context.ShoppingItems.Remove(shoppingItemToDelete);
-            var executedCorrectly = await _context.SaveChangesAsync();
-            return await SaveChangesAsync();
+            var executedCorrectly = await SaveChangesAsync();
+            return executedCorrectly;
         }
 
         private async Task<bool> SaveChangesAsync()
@@ -63,6 +69,25 @@ namespace TheBestCloth.DAL.Repositories
 
             await _context.SaveChangesAsync();
             return shoppingItem;
+        }
+
+        public async Task<Photo> AddPhotoForItemAsync(Photo photo, int shoppingItemId)
+        {
+            var shoppingItem = await GetShoppingItemByIdAsync(shoppingItemId);
+            if (shoppingItem == null) return null;
+            shoppingItem.Photos.Add(photo);
+            if (await SaveChangesAsync()) return photo;
+            else throw new DatabaseException($"Failed to add photo to item with ID: {shoppingItemId} in database");
+        }
+
+        public async Task<bool> RemovePhotoFromShoppingItemAsync(int photoId, int shoppingItemId)
+        {
+            var shoppingItem = await GetShoppingItemByIdAsync(shoppingItemId);
+            if (shoppingItem == null) return false;
+            var photoToRemove = shoppingItem.Photos.Where(photo => photo.Id == photoId).SingleOrDefault();
+            if (photoToRemove == null) return false;
+            shoppingItem.Photos.Remove(photoToRemove);
+            return await SaveChangesAsync();
         }
     }
 }

@@ -29,6 +29,9 @@ namespace TheBestCloth.API.Migrations
                     b.Property<string>("PhotoUrl")
                         .HasColumnType("text");
 
+                    b.Property<string>("PublicId")
+                        .HasColumnType("text");
+
                     b.Property<int?>("ShoppingItemId")
                         .HasColumnType("integer");
 

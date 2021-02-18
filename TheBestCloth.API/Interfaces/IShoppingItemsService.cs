@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 using TheBestCloth.BLL.Helpers;
 using TheBestCloth.BLL.ModelDatabase;
 
@@ -11,5 +12,7 @@ namespace TheBestCloth.API.Interfaces
         Task<ShoppingItem> GetShoppingItemById(int id);
         Task<IEnumerable<ShoppingItem>> GetAllShoppingItemsAsync(PaginationParams paginationParams);
         Task<ShoppingItem> UpdateShoppingItemAsync(ShoppingItem shoppingItem);
+        Task<Photo> AddPhotoForItemAsync(IFormFile photo, int shoppingItemId);
+        Task<bool> RemovePhotoFromShoppingItemAsync(int photoId, int shoppingItemId);
     }
 }

@@ -11,5 +11,7 @@ namespace TheBestCloth.BLL.Interfaces
         Task<ShoppingItem> GetShoppingItemByIdAsync(int id);
         Task<IEnumerable<ShoppingItem>> GetAllShoppingItemsListAsync(PaginationParams paginationParams);
         Task<ShoppingItem> UpdateShoppingItemAsync(ShoppingItem shoppingItem);
+        Task<Photo> AddPhotoForItemAsync(Photo photo, int shoppingItemId);
+        Task<bool> RemovePhotoFromShoppingItemAsync(int photoId, int shoppingItemId);
     }
 }

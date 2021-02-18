@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TheBestCloth.API.AppSettingsModel;
 using TheBestCloth.API.Interfaces;
 using TheBestCloth.API.Service;
 using TheBestCloth.BLL.Interfaces;
@@ -13,6 +14,8 @@ namespace TheBestCloth.API.Extensions
         {
             services.AddScoped<IShoppingItemRepository, ShoppingItemRepository>();
             services.AddScoped<IShoppingItemsService, ShoppingItemsService>();
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
 
             return services;
         }
