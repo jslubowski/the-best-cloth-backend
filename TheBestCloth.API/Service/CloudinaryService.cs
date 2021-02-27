@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using TheBestCloth.API.AppSettingsModel;
 using TheBestCloth.API.Interfaces;
+using TheBestCloth.BLL.Domain;
 
 namespace TheBestCloth.API.Service
 {
@@ -21,7 +22,7 @@ namespace TheBestCloth.API.Service
                 );
             _cloudinary = new Cloudinary(acc);
         }
-        public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)
+        public async Task<PhotoDTO> AddPhotoAsync(IFormFile file)
         {
             var uploadResult = new ImageUploadResult();
 
@@ -36,7 +37,9 @@ namespace TheBestCloth.API.Service
                 uploadResult = await _cloudinary.UploadAsync(uploadParams);
             }
 
-            return uploadResult;
+            if (uploadResult.Error != null) return null;
+
+            return new PhotoDTO(uploadResult.SecureUrl.AbsoluteUri, uploadResult.PublicId);
         }
 
         public async Task<DeletionResult> DeletePhotoAsync(string publicId)

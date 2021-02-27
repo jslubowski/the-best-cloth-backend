@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using TheBestCloth.API.Extensions;
 using TheBestCloth.API.Interfaces;
@@ -11,11 +12,13 @@ namespace TheBestCloth.API.Controllers
 {
     public class ShoppingItemsController : BaseApiController
     {
-        private readonly IShoppingItemsService _shoppingItemsService;
-        public ShoppingItemsController(IShoppingItemsService shoppingItemsService)
+        public ShoppingItemsController(IShoppingItemsService shoppingItemsService, ILogger<ShoppingItemsController> logger)
         {
             _shoppingItemsService = shoppingItemsService;
+            _logger = logger;
         }
+        private readonly IShoppingItemsService _shoppingItemsService;
+        private readonly ILogger<ShoppingItemsController> _logger;
 
         [HttpPost("add", Name = "add-shopping-item")]
         public async Task<ActionResult<ShoppingItem>> AddShoppingItemAsync([FromBody] ShoppingItem shoppingItem)
@@ -73,7 +76,7 @@ namespace TheBestCloth.API.Controllers
         [HttpDelete("{shoppingItemId}/photos/{photoId}")]
         public async Task<ActionResult> RemovePhotoForShoppingItem(int shoppingItemId, int photoId)
         {
-            var isRemovalSuccessful = false;
+            bool isRemovalSuccessful;
             try
             {
                 isRemovalSuccessful = await _shoppingItemsService.RemovePhotoFromShoppingItemAsync(photoId, shoppingItemId);

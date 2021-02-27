@@ -18,11 +18,22 @@ namespace TheBestCloth.API
         }
 
         public IConfiguration Configuration { get; }
+        private readonly string _allowAllCorsPolicy = "AllowAllPolicy";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationServices(Configuration);
+
+            services.AddCors(o => o.AddPolicy(_allowAllCorsPolicy, builder =>
+            {
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed(o => true);
+            }));
+
             services.AddControllers();
             services.AddDbContext<PostgresContext>(opt =>
             {
@@ -32,6 +43,7 @@ namespace TheBestCloth.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TheBestCloth.API", Version = "v1" });
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +61,8 @@ namespace TheBestCloth.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors(_allowAllCorsPolicy);
 
             app.UseEndpoints(endpoints =>
             {

@@ -24,11 +24,11 @@ namespace TheBestCloth.API.Service
         {
             var uploadResult = await _cloudinaryService.AddPhotoAsync(photo);
 
-            if (uploadResult.Error != null) return null;
+            if (uploadResult == null) return null;
 
             var photoEntity = new Photo
             {
-                PhotoUrl = uploadResult.SecureUrl.AbsoluteUri,
+                PhotoUrl = uploadResult.PhotoUrl,
                 PublicId = uploadResult.PublicId
             };
 
