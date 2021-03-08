@@ -17,10 +17,6 @@ namespace TheBestCloth.DAL.Data
 
         public DbSet<ShoppingItem> ShoppingItems { get; set; }
         public DbSet<Photo> Photos { get; set; }
-
-        internal object FirstOrDefault()
-        {
-            throw new NotImplementedException();
-        }
+        public DbSet<User> Users { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace TheBestCloth.API.Controllers
         private readonly IShoppingItemsService _shoppingItemsService;
         private readonly ILogger<ShoppingItemsController> _logger;
 
+        [Authorize]
         [HttpPost("add", Name = "add-shopping-item")]
         public async Task<ActionResult<ShoppingItem>> AddShoppingItemAsync([FromBody] ShoppingItem shoppingItem)
         {
@@ -29,6 +31,7 @@ namespace TheBestCloth.API.Controllers
 
         }
 
+        [Authorize]
         [HttpGet("{id}", Name = "get-shopping-item")]
         public async Task<ActionResult<ShoppingItem>> GetShoppingItemByIdAsync(int id)
         {
@@ -38,6 +41,7 @@ namespace TheBestCloth.API.Controllers
 
         }
 
+        [Authorize]
         [HttpGet("all", Name = "get-all-shopping-items")]
         public async Task<ActionResult<IEnumerable<ShoppingItem>>> GetAllShopingItemsAsync([FromQuery] PaginationParams paginationParams)
         {
@@ -49,6 +53,7 @@ namespace TheBestCloth.API.Controllers
             return shoppingItems;
         }
 
+        [Authorize]
         [HttpPut(Name = "update-shopping-item")]
         public async Task<ActionResult<ShoppingItem>> UpdateShoppingItemAsync([FromBody] ShoppingItem shoppingItem)
         {
@@ -57,6 +62,7 @@ namespace TheBestCloth.API.Controllers
             return Ok(shoppingItemUpdated);
         }
 
+        [Authorize]
         [HttpDelete("{shoppingItemId}", Name = "remove-shopping-item")]
         public async Task<ActionResult> RemoveShoppingItemAsync(int shoppingItemId)
         {
@@ -65,6 +71,7 @@ namespace TheBestCloth.API.Controllers
             return BadRequest($"Cannot remove shopping item with ID: {shoppingItemId}");
         }
 
+        [Authorize]
         [HttpPost("{id}/photos", Name = "add-photo")]
         public async Task<ActionResult<Photo>> AddPhotoForShoppingItemAsync([FromForm] IFormFile photo, int id)
         {
@@ -73,6 +80,7 @@ namespace TheBestCloth.API.Controllers
             else return Ok(photoAdded);
         }
 
+        [Authorize]
         [HttpDelete("{shoppingItemId}/photos/{photoId}")]
         public async Task<ActionResult> RemovePhotoForShoppingItem(int shoppingItemId, int photoId)
         {

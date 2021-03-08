@@ -15,6 +15,10 @@ namespace TheBestCloth.API.Extensions
             services.AddScoped<IShoppingItemRepository, ShoppingItemRepository>();
             services.AddScoped<IShoppingItemsService, ShoppingItemsService>();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<ITokenService, TokenService>();
             services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
 
             return services;

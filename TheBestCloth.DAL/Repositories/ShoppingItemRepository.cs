@@ -6,6 +6,7 @@ using TheBestCloth.BLL.Helpers;
 using TheBestCloth.BLL.Interfaces;
 using TheBestCloth.BLL.ModelDatabase;
 using TheBestCloth.DAL.Data;
+using TheBestCloth.DAL.Extensions;
 
 namespace TheBestCloth.DAL.Repositories
 {
@@ -20,8 +21,7 @@ namespace TheBestCloth.DAL.Repositories
         public async Task<ShoppingItem> AddShoppingItemAsync(ShoppingItem shoppingItem)
         {
             var item = await _context.ShoppingItems.AddAsync(shoppingItem);
-            await SaveChangesAsync();
-            return item.Entity;
+            return await _context.SaveChangesAndCheckSuccessAsync() ? item.Entity : null;
         }
 
         public Task<ShoppingItem> GetShoppingItemByIdAsync(int id)
@@ -47,15 +47,7 @@ namespace TheBestCloth.DAL.Repositories
             var shoppingItemToDelete = await _context.ShoppingItems.FirstOrDefaultAsync(item => item.Id == id);
             if (shoppingItemToDelete == null) return true;
             _context.ShoppingItems.Remove(shoppingItemToDelete);
-            var executedCorrectly = await SaveChangesAsync();
-            return executedCorrectly;
-        }
-
-        private async Task<bool> SaveChangesAsync()
-        {
-            var executedCorrectly = await _context.SaveChangesAsync();
-            if (executedCorrectly > 0) return true;
-            else return false;
+            return await _context.SaveChangesAndCheckSuccessAsync();
         }
 
         public async Task<ShoppingItem> UpdateShoppingItemAsync(ShoppingItem shoppingItem)
@@ -67,8 +59,7 @@ namespace TheBestCloth.DAL.Repositories
             _context.ShoppingItems.Attach(shoppingItem);
             _context.Entry(shoppingItem).State = EntityState.Modified;
 
-            await _context.SaveChangesAsync();
-            return shoppingItem;
+            return await _context.SaveChangesAndCheckSuccessAsync() ? shoppingItem : null;
         }
 
         public async Task<Photo> AddPhotoForItemAsync(Photo photo, int shoppingItemId)
@@ -76,7 +67,7 @@ namespace TheBestCloth.DAL.Repositories
             var shoppingItem = await GetShoppingItemByIdAsync(shoppingItemId);
             if (shoppingItem == null) return null;
             shoppingItem.Photos.Add(photo);
-            if (await SaveChangesAsync()) return photo;
+            if (await _context.SaveChangesAndCheckSuccessAsync()) return photo;
             else throw new DatabaseException($"Failed to add photo to item with ID: {shoppingItemId} in database");
         }
 
@@ -87,7 +78,7 @@ namespace TheBestCloth.DAL.Repositories
             var photoToRemove = shoppingItem.Photos.Where(photo => photo.Id == photoId).SingleOrDefault();
             if (photoToRemove == null) return false;
             shoppingItem.Photos.Remove(photoToRemove);
-            return await SaveChangesAsync();
+            return await _context.SaveChangesAndCheckSuccessAsync();
         }
     }
 }

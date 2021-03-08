@@ -60,6 +60,27 @@ namespace TheBestCloth.API.Migrations
                     b.ToTable("ShoppingItems");
                 });
 
+            modelBuilder.Entity("TheBestCloth.BLL.ModelDatabase.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("bytea");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("TheBestCloth.BLL.ModelDatabase.Photo", b =>
                 {
                     b.HasOne("TheBestCloth.BLL.ModelDatabase.ShoppingItem", "ShoppingItem")
