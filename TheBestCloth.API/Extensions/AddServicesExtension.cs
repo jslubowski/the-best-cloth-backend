@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TheBestCloth.API.AppSettingsModel;
+using TheBestCloth.API.Helpers;
 using TheBestCloth.API.Interfaces;
 using TheBestCloth.API.Service;
 using TheBestCloth.BLL.Interfaces;
@@ -19,6 +20,7 @@ namespace TheBestCloth.API.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
 
             return services;

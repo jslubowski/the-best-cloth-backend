@@ -1,9 +1,9 @@
 ﻿namespace TheBestCloth.BLL.Domain
 {
-    public class ExceptionDTO
+    public class ExceptionDto
     {
         public string Message { get; }
-        public ExceptionDTO(string message)
+        public ExceptionDto(string message)
         {
             Message = message;
         }

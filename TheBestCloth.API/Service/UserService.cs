@@ -1,4 +1,5 @@
-﻿using System.Security;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,31 +22,19 @@ namespace TheBestCloth.API.Service
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
 
-        public async Task<UserDTO> RegisterUserAsync(string username, string password)
+        public async Task<UserDto> RegisterUserAsync([FromBody] RegisterUserDto registerUserDto)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-            {
-                return null;
-            }
+            var existingUser = await _userRepository.GetUserByEmailAsync(registerUserDto.Password);
 
-            var existingUser = await _userRepository.GetUserByUsername(username);
+            if (existingUser != null) throw new DatabaseException($"User {registerUserDto.Email} already exists!");
 
-            if (existingUser != null) throw new DatabaseException($"User {username} already exists!");
-
-            using var hmac = new HMACSHA512();
-
-            var user = new User
-            {
-                Username = username,
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
-                PasswordSalt = hmac.Key
-            };
+            var user = new User(registerUserDto);
 
             var addedUser = await _userRepository.AddUserAsync(user);
 
-            if (addedUser == null) throw new DatabaseException($"Error while adding user {username}");
+            if (addedUser == null) throw new DatabaseException($"Error while adding user {registerUserDto.Email}");
 
-            return new UserDTO(addedUser.Id, addedUser.Username, _tokenService.CreateToken(addedUser));
+            return new UserDto(addedUser, _tokenService.CreateToken(addedUser));
         }
 
         public Task<IEnumerable<User>> GetAllUsersAsync(PaginationParams paginationParams)
@@ -53,23 +42,16 @@ namespace TheBestCloth.API.Service
             return _userRepository.GetAllUsersAsync(paginationParams);
         }
 
-        public async Task<UserDTO> GetUserByIdAsync(int id)
+        public async Task<UserDto> GetUserByIdAsync(int id)
         {
-            var user = await _userRepository.GetUserById(id);
+            var user = await _userRepository.GetUserByIdAsync(id);
             if (user == null) return null;
-            return new UserDTO(user.Id, user.Username);
+            return new UserDto(user);
         }
 
-        public async Task<UserDTO> GetUserByUsernameAsync(string username)
+        public async Task<UserDto> LoginUserAsync(string email, string password)
         {
-            var user = await _userRepository.GetUserByUsername(username);
-            if (user == null) return null;
-            return new UserDTO(user.Id, user.Username);
-        }
-
-        public async Task<UserDTO> LoginUserAsync(string username, string password)
-        {
-            var user = await _userRepository.GetUserByUsername(username);
+            var user = await _userRepository.GetUserByEmailAsync(email);
 
             if (user == null) return null;
 
@@ -78,12 +60,17 @@ namespace TheBestCloth.API.Service
 
             for (int i = 0; i < computedHash.Length; i++)
             {
-                if (computedHash[i] != user.PasswordHash[i]) 
-                    throw new SecurityException($"Invalid password for user {user.Username}");
+                if (computedHash[i] != user.PasswordHash[i])
+                    throw new SecurityException($"Invalid password for user {user.Email}");
 
             }
 
-            return new UserDTO(user.Id, user.Username, _tokenService.CreateToken(user));
+            return new UserDto(user, _tokenService.CreateToken(user));
+        }
+
+        public async Task<UserDto> GetUserByEmailAsync(string email)
+        {
+            return new UserDto(await _userRepository.GetUserByEmailAsync(email));
         }
     }
 }

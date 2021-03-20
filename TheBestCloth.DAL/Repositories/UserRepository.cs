@@ -33,16 +33,16 @@ namespace TheBestCloth.DAL.Repositories
                 );
         }
 
-        public Task<User> GetUserById(int id)
+        public Task<User> GetUserByIdAsync(int id)
         {
             return _context.Users
                 .FirstOrDefaultAsync(item => item.Id == id);
         }
 
-        public Task<User> GetUserByUsername(string username)
+        public Task<User> GetUserByEmailAsync(string email)
         {
             return _context.Users
-                .Where(item => item.Username == username)
+                .Where(user => user.Email == email)
                 .SingleOrDefaultAsync();
         }
     }

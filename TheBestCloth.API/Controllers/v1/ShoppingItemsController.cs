@@ -31,7 +31,6 @@ namespace TheBestCloth.API.Controllers
 
         }
 
-        [Authorize]
         [HttpGet("{id}", Name = "get-shopping-item")]
         public async Task<ActionResult<ShoppingItem>> GetShoppingItemByIdAsync(int id)
         {
@@ -41,7 +40,6 @@ namespace TheBestCloth.API.Controllers
 
         }
 
-        [Authorize]
         [HttpGet("all", Name = "get-all-shopping-items")]
         public async Task<ActionResult<IEnumerable<ShoppingItem>>> GetAllShopingItemsAsync([FromQuery] PaginationParams paginationParams)
         {

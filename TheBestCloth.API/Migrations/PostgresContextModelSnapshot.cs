@@ -67,14 +67,20 @@ namespace TheBestCloth.API.Migrations
                         .HasColumnType("integer")
                         .UseIdentityByDefaultColumn();
 
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
                     b.Property<byte[]>("PasswordHash")
                         .HasColumnType("bytea");
 
                     b.Property<byte[]>("PasswordSalt")
                         .HasColumnType("bytea");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

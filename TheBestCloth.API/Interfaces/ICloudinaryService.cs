@@ -7,7 +7,7 @@ namespace TheBestCloth.API.Interfaces
 {
     public interface ICloudinaryService
     {
-        Task<PhotoDTO> AddPhotoAsync(IFormFile file);
+        Task<PhotoDto> AddPhotoAsync(IFormFile file);
         Task<DeletionResult> DeletePhotoAsync(string publicId);
     }
 }

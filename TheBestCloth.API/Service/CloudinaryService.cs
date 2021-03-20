@@ -22,7 +22,7 @@ namespace TheBestCloth.API.Service
                 );
             _cloudinary = new Cloudinary(acc);
         }
-        public async Task<PhotoDTO> AddPhotoAsync(IFormFile file)
+        public async Task<PhotoDto> AddPhotoAsync(IFormFile file)
         {
             var uploadResult = new ImageUploadResult();
 
@@ -39,7 +39,7 @@ namespace TheBestCloth.API.Service
 
             if (uploadResult.Error != null) return null;
 
-            return new PhotoDTO(uploadResult.SecureUrl.AbsoluteUri, uploadResult.PublicId);
+            return new PhotoDto(uploadResult.SecureUrl.AbsoluteUri, uploadResult.PublicId);
         }
 
         public async Task<DeletionResult> DeletePhotoAsync(string publicId)

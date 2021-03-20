@@ -21,28 +21,23 @@ namespace TheBestCloth.API.Controllers.v1
         private readonly ILogger<UsersController> _logger;
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserDTO>> RegisterAsync()
+        public async Task<ActionResult<UserDto>> RegisterAsync([FromBody] RegisterUserDto registerUserDto)
         {
-            var credentials = _authenticationService.DecodeBasicAuthenticationHeader(
-                this.HttpContext.Request.Headers["Authorization"]
-                );
-            if (credentials == null) return BadRequest("Incorrect format of authentication header");
-
             try
             {
-                var user = await _userService.RegisterUserAsync(credentials.Username, credentials.Password);
+                var user = await _userService.RegisterUserAsync(registerUserDto);
                 if (user == null) return BadRequest();
                 return Ok(user);
             }
             catch (DatabaseException ex)
             {
                 _logger.LogError(ex.ToString());
-                return BadRequest(new ExceptionDTO(ex.Message));
+                return BadRequest(new ExceptionDto(ex.Message));
             }            
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserDTO>> LoginAsync()
+        public async Task<ActionResult<UserDto>> LoginAsync()
         {
             var credentials = _authenticationService.DecodeBasicAuthenticationHeader(
                 this.HttpContext.Request.Headers["Authorization"]

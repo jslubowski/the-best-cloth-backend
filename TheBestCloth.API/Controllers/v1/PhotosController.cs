@@ -15,7 +15,7 @@ namespace TheBestCloth.API.Controllers.v1
         private readonly ICloudinaryService _cloudinaryService;
 
         [HttpPost]
-        public async Task<ActionResult<PhotoDTO>> UploadPhotoToCloudinaryAsync([FromForm] IFormFile photo)
+        public async Task<ActionResult<PhotoDto>> UploadPhotoToCloudinaryAsync([FromForm] IFormFile photo)
         {
             var photoItem = await _cloudinaryService.AddPhotoAsync(photo);
 
