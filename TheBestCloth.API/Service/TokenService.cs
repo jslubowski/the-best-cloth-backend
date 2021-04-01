@@ -3,10 +3,11 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using TheBestCloth.API.Interfaces;
-using TheBestCloth.BLL.ModelDatabase;
+using TheBestCloth.BLL.Domain;
 
 namespace TheBestCloth.API.Service
 {
@@ -18,12 +19,14 @@ namespace TheBestCloth.API.Service
         }
         private readonly SymmetricSecurityKey _key;
 
-        public string CreateToken(User user)
+        public string CreateToken(User user, ICollection<string> roles)
         {
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.NameId, user.Email)
             };
+
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 

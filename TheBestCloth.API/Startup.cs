@@ -2,6 +2,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,8 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using TheBestCloth.API.Extensions;
 using TheBestCloth.API.Validators;
+using TheBestCloth.BLL.Domain;
+using TheBestCloth.BLL.Helpers;
 using TheBestCloth.DAL.Data;
 
 namespace TheBestCloth.API
@@ -39,7 +42,21 @@ namespace TheBestCloth.API
             }));
 
             services.AddControllers()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RegisterUserDtoValidator>());
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RegisterUserDtoValidator>())
+                .AddNewtonsoftJson(options => 
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                    );
+
+            services.AddIdentityCore<User>(options =>
+            {
+                options.Password.RequireNonAlphanumeric = false;
+            })
+                .AddRoles<AppRole>()
+                .AddRoleManager<RoleManager<AppRole>>()
+                .AddSignInManager<SignInManager<User>>()
+                .AddRoleValidator<RoleValidator<AppRole>>()
+                .AddEntityFrameworkStores<PostgresContext>();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -51,10 +68,19 @@ namespace TheBestCloth.API
                         ValidateAudience = false
                     };
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Roles.Moderator, policy => policy.RequireRole(Roles.Moderator, Roles.Admin));
+                options.AddPolicy(Roles.Admin, policy => policy.RequireRole(Roles.Admin));
+                options.AddPolicy(Roles.Customer, policy => policy.RequireRole(Roles.Customer));
+            });
+
             services.AddDbContext<PostgresContext>(opt =>
             {
                 opt.UseNpgsql(Configuration.GetConnectionString("PostgreSQLConnection"), b => b.MigrationsAssembly("TheBestCloth.API"));
             });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TheBestCloth.API", Version = "v1" });

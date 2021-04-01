@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TheBestCloth.BLL.ModelDatabase
+namespace TheBestCloth.BLL.Domain
 {
     public class ShoppingItem
     {

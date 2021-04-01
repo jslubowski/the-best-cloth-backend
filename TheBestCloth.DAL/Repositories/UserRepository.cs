@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using TheBestCloth.BLL.Domain;
 using TheBestCloth.BLL.Helpers;
 using TheBestCloth.BLL.Interfaces;
-using TheBestCloth.BLL.ModelDatabase;
 using TheBestCloth.DAL.Data;
 using TheBestCloth.DAL.Extensions;
 
@@ -43,6 +43,7 @@ namespace TheBestCloth.DAL.Repositories
         {
             return _context.Users
                 .Where(user => user.Email == email)
+                .Include(user => user.UserRoles)
                 .SingleOrDefaultAsync();
         }
     }

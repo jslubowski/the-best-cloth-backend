@@ -1,7 +1,7 @@
 ﻿using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
-using TheBestCloth.BLL.Domain;
+using TheBestCloth.BLL.DTOs;
 
 namespace TheBestCloth.API.Interfaces
 {

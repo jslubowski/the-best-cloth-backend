@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using TheBestCloth.API.Extensions;
 using TheBestCloth.API.Interfaces;
+using TheBestCloth.BLL.Domain;
 using TheBestCloth.BLL.Exceptions;
 using TheBestCloth.BLL.Helpers;
-using TheBestCloth.BLL.ModelDatabase;
 
 namespace TheBestCloth.API.Controllers
 {
@@ -21,7 +21,7 @@ namespace TheBestCloth.API.Controllers
         private readonly IShoppingItemsService _shoppingItemsService;
         private readonly ILogger<ShoppingItemsController> _logger;
 
-        [Authorize]
+        [Authorize(Policy = Roles.Moderator)]
         [HttpPost("add", Name = "add-shopping-item")]
         public async Task<ActionResult<ShoppingItem>> AddShoppingItemAsync([FromBody] ShoppingItem shoppingItem)
         {
@@ -51,7 +51,7 @@ namespace TheBestCloth.API.Controllers
             return shoppingItems;
         }
 
-        [Authorize]
+        [Authorize(Policy = Roles.Moderator)]
         [HttpPut(Name = "update-shopping-item")]
         public async Task<ActionResult<ShoppingItem>> UpdateShoppingItemAsync([FromBody] ShoppingItem shoppingItem)
         {
@@ -60,7 +60,7 @@ namespace TheBestCloth.API.Controllers
             return Ok(shoppingItemUpdated);
         }
 
-        [Authorize]
+        [Authorize(Policy = Roles.Moderator)]
         [HttpDelete("{shoppingItemId}", Name = "remove-shopping-item")]
         public async Task<ActionResult> RemoveShoppingItemAsync(int shoppingItemId)
         {
@@ -69,7 +69,7 @@ namespace TheBestCloth.API.Controllers
             return BadRequest($"Cannot remove shopping item with ID: {shoppingItemId}");
         }
 
-        [Authorize]
+        [Authorize(Policy = Roles.Moderator)]
         [HttpPost("{id}/photos", Name = "add-photo")]
         public async Task<ActionResult<Photo>> AddPhotoForShoppingItemAsync([FromForm] IFormFile photo, int id)
         {
@@ -78,7 +78,7 @@ namespace TheBestCloth.API.Controllers
             else return Ok(photoAdded);
         }
 
-        [Authorize]
+        [Authorize(Policy = Roles.Moderator)]
         [HttpDelete("{shoppingItemId}/photos/{photoId}")]
         public async Task<ActionResult> RemovePhotoForShoppingItem(int shoppingItemId, int photoId)
         {

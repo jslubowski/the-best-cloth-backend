@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TheBestCloth.BLL.ModelDatabase;
+using TheBestCloth.BLL.Domain;
 
 namespace TheBestCloth.DAL.Data
 {

@@ -1,4 +1,4 @@
-﻿namespace TheBestCloth.BLL.Domain
+﻿namespace TheBestCloth.BLL.DTOs
 {
     public class ExceptionDto
     {

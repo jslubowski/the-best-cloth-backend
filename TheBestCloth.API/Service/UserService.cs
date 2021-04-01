@@ -1,40 +1,50 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Linq;
 using System.Security;
-using System.Security.Cryptography;
-using System.Text;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using TheBestCloth.API.Interfaces;
 using TheBestCloth.BLL.Domain;
+using TheBestCloth.BLL.DTOs;
 using TheBestCloth.BLL.Exceptions;
 using TheBestCloth.BLL.Helpers;
 using TheBestCloth.BLL.Interfaces;
-using TheBestCloth.BLL.ModelDatabase;
 
 namespace TheBestCloth.API.Service
 {
     public class UserService : IUserService
     {
-        public UserService(IUserRepository userRepository, ITokenService tokenService)
+        public UserService(IUserRepository userRepository, ITokenService tokenService, UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
         public async Task<UserDto> RegisterUserAsync([FromBody] RegisterUserDto registerUserDto)
         {
             var existingUser = await _userRepository.GetUserByEmailAsync(registerUserDto.Password);
 
-            if (existingUser != null) throw new DatabaseException($"User {registerUserDto.Email} already exists!");
+            if (existingUser != null) throw new RegisterException($"User {registerUserDto.Email} already exists!");
 
-            var user = new User(registerUserDto);
+            var result = await _userManager.CreateAsync(new User(registerUserDto), registerUserDto.Password);
 
-            var addedUser = await _userRepository.AddUserAsync(user);
+            if (!result.Succeeded) throw new RegisterException(result.ToString());
 
-            if (addedUser == null) throw new DatabaseException($"Error while adding user {registerUserDto.Email}");
+            var user = await _userRepository.GetUserByEmailAsync(registerUserDto.Email);
 
-            return new UserDto(addedUser, _tokenService.CreateToken(addedUser));
+            foreach (string role in registerUserDto.UserRoles)
+            {
+                await _userManager.AddToRoleAsync(user, role);
+            }
+
+            return new UserDto(user, registerUserDto.UserRoles, _tokenService.CreateToken(user, registerUserDto.UserRoles));
         }
 
         public Task<IEnumerable<User>> GetAllUsersAsync(PaginationParams paginationParams)
@@ -45,32 +55,23 @@ namespace TheBestCloth.API.Service
         public async Task<UserDto> GetUserByIdAsync(int id)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
+            var roles = await _userManager.GetRolesAsync(user);
             if (user == null) return null;
-            return new UserDto(user);
+            return new UserDto(user, roles);
         }
 
         public async Task<UserDto> LoginUserAsync(string email, string password)
         {
             var user = await _userRepository.GetUserByEmailAsync(email);
 
+            var roles = await _userManager.GetRolesAsync(user);
+
             if (user == null) return null;
 
-            using var hmac = new HMACSHA512(user.PasswordSalt);
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            var result = await _signInManager
+                .CheckPasswordSignInAsync(user, password, false);
 
-            for (int i = 0; i < computedHash.Length; i++)
-            {
-                if (computedHash[i] != user.PasswordHash[i])
-                    throw new SecurityException($"Invalid password for user {user.Email}");
-
-            }
-
-            return new UserDto(user, _tokenService.CreateToken(user));
-        }
-
-        public async Task<UserDto> GetUserByEmailAsync(string email)
-        {
-            return new UserDto(await _userRepository.GetUserByEmailAsync(email));
+            return result.Succeeded ? new UserDto(user, roles, _tokenService.CreateToken(user, roles)) : throw new SecurityException(result.ToString());
         }
     }
 }

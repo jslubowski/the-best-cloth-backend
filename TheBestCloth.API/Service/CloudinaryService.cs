@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using TheBestCloth.API.AppSettingsModel;
 using TheBestCloth.API.Interfaces;
-using TheBestCloth.BLL.Domain;
+using TheBestCloth.BLL.DTOs;
 
 namespace TheBestCloth.API.Service
 {
@@ -28,7 +28,7 @@ namespace TheBestCloth.API.Service
 
             if (file.Length > 0)
             {
-                using var stream = file.OpenReadStream();
+                await using var stream = file.OpenReadStream();
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(file.FileName, stream),
@@ -37,9 +37,7 @@ namespace TheBestCloth.API.Service
                 uploadResult = await _cloudinary.UploadAsync(uploadParams);
             }
 
-            if (uploadResult.Error != null) return null;
-
-            return new PhotoDto(uploadResult.SecureUrl.AbsoluteUri, uploadResult.PublicId);
+            return uploadResult.Error != null ? null : new PhotoDto(uploadResult.SecureUrl.AbsoluteUri, uploadResult.PublicId);
         }
 
         public async Task<DeletionResult> DeletePhotoAsync(string publicId)

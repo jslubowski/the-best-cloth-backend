@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using TheBestCloth.BLL.Domain;
+using TheBestCloth.BLL.DTOs;
 
 namespace TheBestCloth.API.Validators
 {

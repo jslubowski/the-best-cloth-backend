@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using TheBestCloth.BLL.Domain;
 using TheBestCloth.BLL.Exceptions;
 using TheBestCloth.BLL.Helpers;
 using TheBestCloth.BLL.Interfaces;
-using TheBestCloth.BLL.ModelDatabase;
 using TheBestCloth.DAL.Data;
 using TheBestCloth.DAL.Extensions;
 

@@ -1,6 +1,7 @@
-﻿using TheBestCloth.BLL.ModelDatabase;
+﻿using System.Collections.Generic;
+using TheBestCloth.BLL.Domain;
 
-namespace TheBestCloth.BLL.Domain
+namespace TheBestCloth.BLL.DTOs
 {
     public class UserDto
     {
@@ -9,22 +10,20 @@ namespace TheBestCloth.BLL.Domain
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public ICollection<string> UserRoles { get; set; }
 
-        public UserDto(User user, string token)
+        public UserDto(User user, ICollection<string> roles, string token) : this(user, roles)
         {
-            Id = user.Id;
             Token = token;
-            Email = user.Email;
-            FirstName = user.FirstName;
-            LastName = user.LastName;
         }
 
-        public UserDto(User user)
+        public UserDto(User user, ICollection<string> roles)
         {
             Id = user.Id;
             Email = user.Email;
             FirstName = user.FirstName;
             LastName = user.LastName;
+            UserRoles = roles;
         }
     }
 }

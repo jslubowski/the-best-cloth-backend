@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using TheBestCloth.API.Interfaces;
-using TheBestCloth.BLL.Domain;
+using TheBestCloth.BLL.DTOs;
+using TheBestCloth.BLL.Helpers;
 
 namespace TheBestCloth.API.Controllers.v1
 {
@@ -15,6 +17,7 @@ namespace TheBestCloth.API.Controllers.v1
         private readonly ICloudinaryService _cloudinaryService;
 
         [HttpPost]
+        [Authorize(Policy = Roles.Moderator)]
         public async Task<ActionResult<PhotoDto>> UploadPhotoToCloudinaryAsync([FromForm] IFormFile photo)
         {
             var photoItem = await _cloudinaryService.AddPhotoAsync(photo);

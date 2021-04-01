@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
+using TheBestCloth.BLL.Domain;
 using TheBestCloth.BLL.Helpers;
-using TheBestCloth.BLL.ModelDatabase;
 
 namespace TheBestCloth.API.Interfaces
 {

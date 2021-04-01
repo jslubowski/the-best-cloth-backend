@@ -9,7 +9,7 @@ using TheBestCloth.DAL.Repositories;
 
 namespace TheBestCloth.API.Extensions
 {
-    public static class AddServicesExtension
+    public static class ServiceCollectionExtension
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
@@ -20,7 +20,6 @@ namespace TheBestCloth.API.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ITokenService, TokenService>();
-            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
 
             return services;

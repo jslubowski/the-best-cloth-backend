@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using TheBestCloth.API.Exceptions;
 using TheBestCloth.API.Interfaces;
+using TheBestCloth.BLL.Domain;
 using TheBestCloth.BLL.Exceptions;
 using TheBestCloth.BLL.Helpers;
 using TheBestCloth.BLL.Interfaces;
-using TheBestCloth.BLL.ModelDatabase;
 
 namespace TheBestCloth.API.Service
 {

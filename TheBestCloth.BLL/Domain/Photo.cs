@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TheBestCloth.BLL.ModelDatabase
+namespace TheBestCloth.BLL.Domain
 {
     public class Photo
     {
