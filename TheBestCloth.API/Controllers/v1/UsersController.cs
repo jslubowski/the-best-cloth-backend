@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Security;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using TheBestCloth.API.Interfaces;
 using TheBestCloth.BLL.Domain;
 using TheBestCloth.BLL.DTOs;

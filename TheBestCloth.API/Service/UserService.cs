@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Security;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using TheBestCloth.API.Interfaces;
 using TheBestCloth.BLL.Domain;
 using TheBestCloth.BLL.DTOs;
@@ -64,9 +62,9 @@ namespace TheBestCloth.API.Service
         {
             var user = await _userRepository.GetUserByEmailAsync(email);
 
-            var roles = await _userManager.GetRolesAsync(user);
-
             if (user == null) return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
 
             var result = await _signInManager
                 .CheckPasswordSignInAsync(user, password, false);

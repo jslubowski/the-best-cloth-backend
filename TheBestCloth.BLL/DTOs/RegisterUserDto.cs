@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TheBestCloth.BLL.Domain;
 
 namespace TheBestCloth.BLL.DTOs
 {
