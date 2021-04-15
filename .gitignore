@@ -350,7 +350,6 @@ MigrationBackup/
 .ionide/
 
 */appsettings.*
-*/Migrations/*
 
 Dockerfile
 
