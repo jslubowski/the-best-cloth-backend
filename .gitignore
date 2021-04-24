@@ -351,6 +351,4 @@ MigrationBackup/
 
 */appsettings.*
 
-Dockerfile
-
 TheBestCloth.DAL/Data/admin.json

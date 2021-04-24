@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TheBestCloth.API.AppSettingsModel;
-using TheBestCloth.API.Helpers;
 using TheBestCloth.API.Interfaces;
 using TheBestCloth.API.Service;
 using TheBestCloth.BLL.Interfaces;

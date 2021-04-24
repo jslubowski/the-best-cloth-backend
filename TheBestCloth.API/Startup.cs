@@ -76,10 +76,7 @@ namespace TheBestCloth.API
                 options.AddPolicy(Roles.Customer, policy => policy.RequireRole(Roles.Customer));
             });
 
-            services.AddDbContext<PostgresContext>(opt =>
-            {
-                opt.UseNpgsql(Configuration.GetConnectionString("PostgreSQLConnection"), b => b.MigrationsAssembly("TheBestCloth.API"));
-            });
+            services.AddPostgresContext(Configuration);
 
             services.AddSwaggerGen(c =>
             {
